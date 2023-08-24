@@ -121,17 +121,17 @@ while not motor_serial.shutdown_now :
     
     elif dist_1>50: 
         drive_turn(FORWARDS,0.2)
-        turn_robot(RIGHT,0.75)
+        turn_robot(RIGHT,1.25)
         drive_turn(FORWARDS,0.4)
     
     elif dist_1<15 and dist_3<15:
-        turn_robot(LEFT,0.75)
+        turn_robot(LEFT,1.25)
         
     elif dist_1<15 and dist_3<15 and dist_2<15: 
-        turn_robot(RIGHT,0.75)
-        turn_robot(RIGHT,0.75)
+        turn_robot(RIGHT,1.25)
+        turn_robot(RIGHT,1.25)
     elif dist_3<15 or dist_4<15:
-        turn_robot(RIGHT,0.5)
+        turn_robot(RIGHT,1.25)
         
     
         
