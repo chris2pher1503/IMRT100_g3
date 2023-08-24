@@ -20,7 +20,7 @@ RIGHT = 1
 FORWARDS = 1
 BACKWARDS = -1
 DRIVING_SPEED = 100
-TURNING_SPEED = 150
+TURNING_SPEED = 100
 STOP_DISTANCE = 25
 
 def stop_robot(duration):
@@ -40,8 +40,14 @@ def drive_robot(dist_1, dist_2, duration):
         motor_serial.send_command(speed_motor_1, speed_motor_2)
         time.sleep(duration)
         
-def drive_turn():
-    
+def drive_turn(directions,duration):
+    speed = DRIVING_SPEED * direction
+    iterations = int(duration * 10)
+
+    for i in range(iterations):
+        motor_serial.send_command(speed, speed)
+        time.sleep(0.10)
+
         
         
 
@@ -117,7 +123,7 @@ while not motor_serial.shutdown_now :
         
     
     elif dist_1>50: 
-        drive_robot(dist_1,dist_2,0.2)
+        drive_robot(Forwards,0.2)
         turn_robot(RIGHT,0.5)
     
     elif dist_1<15 and dist_3<15:
