@@ -34,7 +34,7 @@ def stop_robot(duration):
 
 
 def drive_robot(dist_1, dist_2, duration):
-        gain = 8
+        gain = 4
         speed_motor_1 = dist_1 * gain
         speed_motor_2 = dist_2 * gain
         motor_serial.send_command(speed_motor_1, speed_motor_2)
