@@ -40,7 +40,7 @@ def drive_robot(dist_1, dist_2, duration):
         motor_serial.send_command(speed_motor_1, speed_motor_2)
         time.sleep(duration)
         
-def drive_turn(directions,duration):
+def drive_turn(direction,duration):
     speed = DRIVING_SPEED * direction
     iterations = int(duration * 10)
 
@@ -65,7 +65,7 @@ def turn_robot(direction, duration):
 
 
 # We want our program to send commands at 10 Hz (10 commands per second)
-execution_frequency = 200 #Hz
+execution_frequency = 100 #Hz
 execution_period = 1. / execution_frequency #seconds
 
 
