@@ -46,7 +46,7 @@ def drive_turn(direction,duration):
 
     for i in range(iterations):
         motor_serial.send_command(speed, speed)
-        time.sleep(0.10)
+        time.sleep(0.30)
 
         
         
