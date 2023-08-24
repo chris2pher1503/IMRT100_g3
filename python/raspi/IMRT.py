@@ -117,7 +117,7 @@ while not motor_serial.shutdown_now :
         
     
     elif dist_1>50: 
-        drive_robot(FORWARDS,0.1)
+        drive_robot(dist_1,dist_2,0.2)
         turn_robot(RIGHT,0.5)
     
     elif dist_1<15 and dist_3<15:
@@ -134,7 +134,7 @@ while not motor_serial.shutdown_now :
 
     else:
         # If there is nothing in front of the robot it continus driving forwards
-        drive_robot(FORWARDS, 0.001)
+        drive_robot(dist_1,dist_2, 0.001)
         
         
         
