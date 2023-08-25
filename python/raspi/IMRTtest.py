@@ -14,7 +14,7 @@ import time
 import sys
 import random
 
-
+teller=0
 LEFT = -1
 RIGHT = 1
 FORWARDS = 1
@@ -109,9 +109,12 @@ while not motor_serial.shutdown_now :
     print("Dist hoyre:", dist_1, "   Dist venstre:", dist_2, "   Dist foran1:", dist_3, "   Dist foran2:", dist_4)
 
     # Check if there is an obstacle in the way
-    if dist_1>100 and dist_2>100 and dist_3>100: 
-        stop_robot(60)
-        #play song
+    if dist_1>100 and dist_2>100 and dist_3>100:
+        if teller>0: 
+            stop_robot(60)
+            
+        teller+=1
+        
         
     
     elif dist_1>50: 
