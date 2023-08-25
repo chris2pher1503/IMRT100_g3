@@ -1,0 +1,51 @@
+# Importer de nødvendige modulene
+
+# ...
+
+MIN_DISTANCE = 15  # Minimum avstand til veggen i cm
+TURN_ANGLE = 90  # Vinkelen å svinge når en åpning oppdages
+DRIVING_SPEED = 200  # Hastighet for rett frem-kjøring
+TURNING_SPEED = 300  # Hastighet for svinging
+
+def stop_robot(duration):
+    motor_serial.send_command(0, 0)
+    time.sleep(duration)
+
+def drive_robot(speed_1, speed_2, duration):
+    motor_serial.send_command(speed_1, speed_2)
+    time.sleep(duration)
+
+def turn_robot(direction, duration):
+    iterations = int(duration * 10)
+    for _ in range(iterations):
+        motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
+        time.sleep(0.1)
+
+def follow_wall():
+    while not motor_serial.shutdown_now:
+        dist_front_right = motor_serial.get_dist_1()
+        dist_side_right = motor_serial.get_dist_2()
+        dist_front_left = motor_serial.get_dist_3()
+        dist_side_left = motor_serial.get_dist_4()
+        
+        if dist_front_right < MIN_DISTANCE:
+            # Stopp roboten og gjør en 90 graders sving til høyre
+            stop_robot(0.1)
+            turn_robot(RIGHT, TURN_ANGLE / 360)  # Deler på 360 for å konvertere til proporsjonal tid
+            time.sleep(0.1)  # Gi roboten tid til å snu seg
+            
+        elif dist_side_right > dist_side_left:
+            # Juster mot høyre for å holde 15 cm avstand til veggen
+            drive_robot(DRIVING_SPEED, DRIVING_SPEED * (dist_side_right - MIN_DISTANCE) / 10, 0.1)
+        
+        else:
+            # Korrigere basert på målinger foran og bak
+            correction = (dist_front_right - dist_front_left) / 10
+            drive_robot(DRIVING_SPEED + correction, DRIVING_SPEED - correction, 0.1)
+
+# ...
+
+# Kjør følg-vegg koden
+follow_wall()
+
+# ...
