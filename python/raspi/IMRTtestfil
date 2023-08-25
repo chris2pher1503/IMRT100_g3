@@ -1,0 +1,81 @@
+import imrt_robot_serial
+import time
+import sys
+
+LEFT = -1
+RIGHT = 1
+FORWARDS = 1
+BACKWARDS = -1
+DRIVING_SPEED = 150
+TURNING_SPEED = 150
+STOP_DISTANCE = 15
+
+def stop_robot(duration):
+    motor_serial.send_command(0, 0)
+    time.sleep(duration)
+
+def drive_robot(dist_right, dist_left, duration):
+    gain = 15
+    speed_motor_right = dist_right * gain
+    speed_motor_left = dist_left * gain
+    motor_serial.send_command(speed_motor_right, speed_motor_left)
+    time.sleep(duration)
+
+def drive_turn(direction, duration):
+    speed = DRIVING_SPEED * direction
+    motor_serial.send_command(speed, speed)
+    time.sleep(duration)
+
+def turn_robot(direction, duration):
+    iteration = int(duration * 10)
+    for i in range(iteration):
+        motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
+        time.sleep(0.1)
+
+def decide_turn_direction(dist_left, dist_right):
+    """Decide turn direction based on side sensors."""
+    if dist_left > dist_right:
+        return LEFT
+    return RIGHT
+
+# Create motor serial object
+motor_serial = imrt_robot_serial.IMRTRobotSerial()
+
+# Open serial port. Exit if serial port cannot be opened
+try:
+    motor_serial.connect("/dev/ttyACM0")
+except:
+    print("Could not open port. Is your robot connected?\nExiting program")
+    sys.exit()
+
+# Start serial receive thread
+motor_serial.run()
+
+# Main loop
+print("Entering loop. Ctrl+c to terminate")
+while not motor_serial.shutdown_now:
+    # Get and print readings from distance sensors
+    dist_right = motor_serial.get_dist_4()
+    dist_left = motor_serial.get_dist_2()
+    dist_front1 = motor_serial.get_dist_3()
+    dist_front2 = motor_serial.get_dist_1()
+
+    print("Dist right:", dist_right, "   Dist left:", dist_left, "   Dist front1:", dist_front1, "   Dist front2:", dist_front2)
+
+    if dist_front1 > STOP_DISTANCE and dist_front2 > STOP_DISTANCE:
+        drive_robot(dist_right, dist_left, 0.0005)
+    elif dist_front1 < STOP_DISTANCE or dist_front2 < STOP_DISTANCE:
+        direction = decide_turn_direction(dist_left, dist_right)
+        turn_robot(direction, 0.6)
+    elif dist_right > 70:
+        drive_turn(FORWARDS, 0.4)
+        turn_robot(RIGHT, 0.6)
+    elif dist_left > 70:
+        drive_turn(FORWARDS, 0.4)
+        turn_robot(LEFT, 0.6)
+    elif dist_right < STOP_DISTANCE and dist_left < STOP_DISTANCE and (dist_front1 < STOP_DISTANCE or dist_front2 < STOP_DISTANCE):
+        turn_robot(RIGHT, 1.2)
+    else:
+        drive_robot(dist_right, dist_left, 0.0005)
+
+print("Goodbye")
