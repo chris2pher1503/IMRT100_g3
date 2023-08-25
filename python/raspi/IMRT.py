@@ -24,12 +24,8 @@ TURNING_SPEED = 300
 STOP_DISTANCE = 10
 
 def stop_robot(duration):
-
-    iterations = int(duration * 10)
-    
-    for i in range(iterations):
-        motor_serial.send_command(0, 0)
-        time.sleep(0.10)
+    motor_serial.send_command(0, 0)
+    time.sleep(duration)
 
 
 
@@ -42,11 +38,8 @@ def drive_robot(dist_1, dist_2, duration):
         
 def drive_turn(direction,duration):
     speed = DRIVING_SPEED * direction
-    iterations = int(duration * 10)
-
-    for i in range(iterations):
         motor_serial.send_command(speed, speed)
-        time.sleep(0.30)
+        time.sleep(duration)
 
 #        
         
