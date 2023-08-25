@@ -19,8 +19,8 @@ LEFT = -1
 RIGHT = 1
 FORWARDS = 1
 BACKWARDS = -1
-DRIVING_SPEED = 200
-TURNING_SPEED = 300
+DRIVING_SPEED = 150
+TURNING_SPEED = 150
 STOP_DISTANCE = 15
 
 def stop_robot(duration):
@@ -44,11 +44,10 @@ def drive_robot(dist_1, dist_2,dist_3,dist_4, duration):
         
 def drive_turn(direction,duration):
     speed = DRIVING_SPEED * direction
-        motor_serial.send_command(speed, speed)
-        time.sleep(duration)
+    motor_serial.send_command(speed, speed)
+    time.sleep(duration)
 
-#        
-        
+
 
 def turn_robot(direction, duration):
     iteration=int(duration*10)
@@ -59,8 +58,6 @@ def turn_robot(direction, duration):
         
         
         
-
-
 
 # We want our program to send commands at 10 Hz (10 commands per second)
 execution_frequency = 100 #Hz
@@ -91,21 +88,6 @@ while not motor_serial.shutdown_now :
 
 
     ###############################################################
-    # This is the start of our loop. Your code goes below.        #
-    #                                                             #
-    # An example is provided to give you a starting point         #
-    # In this example we get the distance readings from each of   #
-    # the two distance sensors. Then we multiply each reading     #
-    # with a constant gain and use the two resulting numbers      #
-    # as commands for each of the two motors.                     #
-    #  ________________________________________________________   #
-    # |                                                        |  #
-    # V                                                           #
-    # V                                                           #
-    ###############################################################
-
-
-
 
     # Get and print readings from distance sensors
     dist_1 = motor_serial.get_dist_4()
@@ -116,9 +98,7 @@ while not motor_serial.shutdown_now :
 
     # Check if there is an obstacle in the way
     if dist_1>100 and dist_2>100 and dist_3>100:
-        if teller>5: 
-            stop_robot(60)
-        teller+=1
+        stop_robot(60)
         
         
     
@@ -141,35 +121,10 @@ while not motor_serial.shutdown_now :
 
     else:
         # If there is nothing in front of the robot it continus driving forwards
-        drive_robot(dist_1,dist_2, 0.001)
+        drive_robot(dist_1,dist_2, 0.0005)
         
-        
-        
-        
-        
+    ##############################################    
 
-
-                
-
-#k
-
-    ###############################################################
-    #                                                           A #
-    #                                                           A #
-    # |_________________________________________________________| #
-    #                                                             #
-    # This is the end of our loop,                                #
-    # execution continus at the start of our loop                 #
-    ###############################################################
-    ###############################################################
-
-
-
-
-
-# motor_serial has told us that its time to exit
-# we have now exited the loop
-# It's only polite to say goodbye
 print("Goodbye")
 
 
