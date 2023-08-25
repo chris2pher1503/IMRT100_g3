@@ -102,12 +102,12 @@ while not motor_serial.shutdown_now :
     
     elif dist_1>70: 
         if dist_3>40 or dist_4>40: 
-            drive_turn(FORWARDS,0.5)
+            drive_turn(FORWARDS,0.4)
         else:
             drive_turn(FORWARDS,0.25)
         turn_robot(RIGHT,0.6)
         if dist_3>40 or dist_4>40: 
-            drive_turn(FORWARDS,0.8)
+            drive_turn(FORWARDS,0.7)
         else:
             drive_turn(FORWARDS,0.4)
     
