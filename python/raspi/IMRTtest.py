@@ -21,7 +21,7 @@ FORWARDS = 1
 BACKWARDS = -1
 DRIVING_SPEED = 200
 TURNING_SPEED = 300
-STOP_DISTANCE = 10
+STOP_DISTANCE = 15
 
 def stop_robot(duration):
     motor_serial.send_command(0, 0)
@@ -29,12 +29,18 @@ def stop_robot(duration):
 
 
 
-def drive_robot(dist_1, dist_2, duration):
+def drive_robot(dist_1, dist_2,dist_3,dist_4, duration):
         gain = 10
         speed_motor_1 = dist_1 * gain
         speed_motor_2 = dist_2 * gain
+        min_distance = min(dist_3, dist_4)
+        if min_distance < STOP_DISTANCE:
+            speed_motor_1 = min(speed_motor_1, DRIVING_SPEED * (min_distance / STOP_DISTANCE))
+            speed_motor_2 = min(speed_motor_2, DRIVING_SPEED * (min_distance / STOP_DISTANCE))
+    
         motor_serial.send_command(speed_motor_1, speed_motor_2)
         time.sleep(duration)
+      
         
 def drive_turn(direction,duration):
     speed = DRIVING_SPEED * direction
