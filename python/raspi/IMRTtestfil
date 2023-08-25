@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# Import some modules that we need
 import imrt_robot_serial
 import time
 import sys
@@ -14,11 +18,8 @@ def stop_robot(duration):
     motor_serial.send_command(0, 0)
     time.sleep(duration)
 
-def drive_robot(dist_right, dist_left, duration):
-    gain = 15
-    speed_motor_right = dist_right * gain
-    speed_motor_left = dist_left * gain
-    motor_serial.send_command(speed_motor_right, speed_motor_left)
+def drive_robot(speed_motor_1, speed_motor_2, duration):
+    motor_serial.send_command(speed_motor_1, speed_motor_2)
     time.sleep(duration)
 
 def drive_turn(direction, duration):
@@ -32,11 +33,9 @@ def turn_robot(direction, duration):
         motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
         time.sleep(0.1)
 
-def decide_turn_direction(dist_left, dist_right):
-    """Decide turn direction based on side sensors."""
-    if dist_left > dist_right:
-        return LEFT
-    return RIGHT
+# We want our program to send commands at 10 Hz (10 commands per second)
+execution_frequency = 100 #Hz
+execution_period = 1. / execution_frequency #seconds
 
 # Create motor serial object
 motor_serial = imrt_robot_serial.IMRTRobotSerial()
@@ -51,7 +50,7 @@ except:
 # Start serial receive thread
 motor_serial.run()
 
-# Main loop
+# Enter the main loop
 print("Entering loop. Ctrl+c to terminate")
 while not motor_serial.shutdown_now:
     # Get and print readings from distance sensors
@@ -62,20 +61,25 @@ while not motor_serial.shutdown_now:
 
     print("Dist right:", dist_right, "   Dist left:", dist_left, "   Dist front1:", dist_front1, "   Dist front2:", dist_front2)
 
-    if dist_front1 > STOP_DISTANCE and dist_front2 > STOP_DISTANCE:
-        drive_robot(dist_right, dist_left, 0.0005)
-    elif dist_front1 < STOP_DISTANCE or dist_front2 < STOP_DISTANCE:
-        direction = decide_turn_direction(dist_left, dist_right)
-        turn_robot(direction, 0.6)
-    elif dist_right > 70:
-        drive_turn(FORWARDS, 0.4)
-        turn_robot(RIGHT, 0.6)
-    elif dist_left > 70:
-        drive_turn(FORWARDS, 0.4)
-        turn_robot(LEFT, 0.6)
-    elif dist_right < STOP_DISTANCE and dist_left < STOP_DISTANCE and (dist_front1 < STOP_DISTANCE or dist_front2 < STOP_DISTANCE):
-        turn_robot(RIGHT, 1.2)
+    # Check frontal sensors for close obstacles
+    if dist_front1 < STOP_DISTANCE or dist_front2 < STOP_DISTANCE:
+        if dist_left < STOP_DISTANCE and dist_right < STOP_DISTANCE:
+            turn_robot(RIGHT, 1.2) # U-turn
+        elif dist_left < STOP_DISTANCE:
+            turn_robot(RIGHT, 0.6)
+        else:
+            turn_robot(LEFT, 0.6)
+
+    # Wall-following behavior
+    elif dist_front1 > 60 and dist_front2 > 60: 
+        if dist_left > 70 and dist_right < 70: 
+            drive_robot(dist_front1 * 0.9, dist_front2, 0.0005)
+        elif dist_right > 70 and dist_left < 70:
+            drive_robot(dist_front1, dist_front2 * 0.9, 0.0005)
+        else:
+            drive_robot(dist_front1, dist_front2, 0.0005)
     else:
-        drive_robot(dist_right, dist_left, 0.0005)
+        # Default behavior: just drive forward.
+        drive_robot(dist_front1, dist_front2, 0.0005)
 
 print("Goodbye")
