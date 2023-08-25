@@ -108,14 +108,14 @@ while not motor_serial.shutdown_now :
 
     # Check if there is an obstacle in the way
     if dist_1>100 and dist_2>100 and dist_3>100: 
-        stop_robot(60)
+        stop_robot(10)
         #play song
         
     
     elif dist_1>50: 
-        drive_turn(FORWARDS,0.3)
+        drive_turn(FORWARDS,0.4)
         turn_robot(RIGHT,1.25)
-        drive_turn(FORWARDS,0.5)
+        drive_turn(FORWARDS,0.8)
     
     elif dist_1<15 and dist_3<15:
         turn_robot(LEFT,1.25)
