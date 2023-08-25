@@ -12,9 +12,7 @@ import imrt_robot_serial
 import signal
 import time
 import sys
-import random
 
-teller=0
 LEFT = -1
 RIGHT = 1
 FORWARDS = 1
@@ -103,9 +101,15 @@ while not motor_serial.shutdown_now :
         
     
     elif dist_1>70: 
-        drive_turn(FORWARDS,0.3)
+        if dist_3>40 or dist_4>40: 
+            drive_turn(FORWARDS,0.5)
+        if dist_3<40 or dist_4<40: 
+            drive_turn(FORWARDS,0.25)
         turn_robot(RIGHT,0.6)
-        drive_turn(FORWARDS,0.4)
+        if dist_3>40 or dist_4>40: 
+            drive_turn(FORWARDS,0.8)
+        if dist_3<40 or dist_4<40: 
+            drive_turn(FORWARDS,0.4)
     
     elif dist_1<15 and dist_3<15:
         turn_robot(LEFT,0.6)
