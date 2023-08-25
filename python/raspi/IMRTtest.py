@@ -45,7 +45,7 @@ def drive_turn(direction,duration):
         
 
 def turn_robot(direction, duration):
-    iteration=int(duration*100)
+    iteration=int(duration*10)
     for i in range(iteration):
         motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
         time.sleep(0.1)
@@ -110,26 +110,25 @@ while not motor_serial.shutdown_now :
 
     # Check if there is an obstacle in the way
     if dist_1>100 and dist_2>100 and dist_3>100:
-        if teller>0: 
+        if teller>5: 
             stop_robot(60)
-            
         teller+=1
         
         
     
-    elif dist_1>50: 
+    elif dist_1>70: 
         drive_turn(FORWARDS,0.3)
-        turn_robot(RIGHT,1.25)
-        drive_turn(FORWARDS,0.5)
+        turn_robot(RIGHT,0.6)
+        drive_turn(FORWARDS,0.4)
     
     elif dist_1<15 and dist_3<15:
-        turn_robot(LEFT,1.25)
+        turn_robot(LEFT,0.6)
         
     elif dist_1<15 and dist_3<15 and dist_2<15: 
-        turn_robot(RIGHT,1.25)
-        turn_robot(RIGHT,1.25)
+        turn_robot(RIGHT,0.6)
+        turn_robot(RIGHT,0.6)
     elif dist_3<15 or dist_4<15:
-        turn_robot(RIGHT,1.25)
+        turn_robot(RIGHT,0.6)
         
     
         
