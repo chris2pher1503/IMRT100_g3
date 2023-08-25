@@ -28,14 +28,9 @@ def stop_robot(duration):
 
 
 def drive_robot(dist_1, dist_2,dist_3,dist_4, duration):
-        gain = 10
+        gain = 15
         speed_motor_1 = dist_1 * gain
         speed_motor_2 = dist_2 * gain
-        min_distance = min(dist_3, dist_4)
-        if min_distance < STOP_DISTANCE:
-            speed_motor_1 = min(speed_motor_1, DRIVING_SPEED * (min_distance / STOP_DISTANCE))
-            speed_motor_2 = min(speed_motor_2, DRIVING_SPEED * (min_distance / STOP_DISTANCE))
-    
         motor_serial.send_command(speed_motor_1, speed_motor_2)
         time.sleep(duration)
       
