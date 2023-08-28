@@ -13,9 +13,9 @@ FORWARDS = 1
 BACKWARDS = -1
 DRIVING_SPEED = 150
 TURNING_SPEED = 150
-STOP_DISTANCE = 15
-DISTANCE_THRESHOLD = 30  # Calibrate this value for 90-degree turn
-FORWARD_AFTER_TURN_DURATION = 0.5  # Adjust as needed
+STOP_DISTANCE = 5
+DISTANCE_THRESHOLD = 20  # Calibrate this value for 90-degree turn
+FORWARD_AFTER_TURN_DURATION = 0.2  # Adjust as needed
 
 motor_serial = imrt_robot_serial.IMRTRobotSerial()
 
