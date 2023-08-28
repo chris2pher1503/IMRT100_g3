@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Import some modules that we need
+# Import necessary modules
 import imrt_robot_serial
+import signal
 import time
 import sys
 
@@ -13,73 +14,97 @@ BACKWARDS = -1
 DRIVING_SPEED = 150
 TURNING_SPEED = 150
 STOP_DISTANCE = 15
+DISTANCE_THRESHOLD = 30  # Calibrate this value for 90-degree turn
+FORWARD_AFTER_TURN_DURATION = 0.5  # Adjust as needed
+
+motor_serial = imrt_robot_serial.IMRTRobotSerial()
+
 
 def stop_robot(duration):
     motor_serial.send_command(0, 0)
     time.sleep(duration)
 
-def drive_robot(speed_motor_1, speed_motor_2, duration):
-    motor_serial.send_command(speed_motor_1, speed_motor_2)
-    time.sleep(duration)
-
-def drive_turn(direction, duration):
-    speed = DRIVING_SPEED * direction
-    motor_serial.send_command(speed, speed)
-    time.sleep(duration)
 
 def turn_robot(direction, duration):
-    iteration = int(duration * 10)
-    for i in range(iteration):
-        motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
-        time.sleep(0.1)
+    motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
+    time.sleep(duration)
 
-# We want our program to send commands at 10 Hz (10 commands per second)
-execution_frequency = 100 #Hz
-execution_period = 1. / execution_frequency #seconds
 
-# Create motor serial object
-motor_serial = imrt_robot_serial.IMRTRobotSerial()
+def turn_90_degrees_feedback(direction):
+    initial_distance = motor_serial.get_dist_1()
+    current_distance = initial_distance
+    
+    while abs(current_distance - initial_distance) < DISTANCE_THRESHOLD:
+        turn_robot(direction, 0.1)  # turn in small increments
+        current_distance = motor_serial.get_dist_1()
+    
+    stop_robot(0.1)
+    # Move forward slightly after turning to avoid the obstacle
+    motor_serial.send_command(DRIVING_SPEED, DRIVING_SPEED)
+    time.sleep(FORWARD_AFTER_TURN_DURATION)
+    stop_robot(0.1)
 
-# Open serial port. Exit if serial port cannot be opened
+def turn_90_degrees_feedback(direction):
+    motor_serial.send_command(DRIVING_SPEED, DRIVING_SPEED)
+    time.sleep(FORWARD_AFTER_TURN_DURATION)
+    initial_distance = motor_serial.get_dist_1()
+    current_distance = initial_distance
+    
+    while abs(current_distance - initial_distance) < DISTANCE_THRESHOLD:
+        turn_robot(direction, 0.1)  # turn in small increments
+        current_distance = motor_serial.get_dist_1()
+    
+    stop_robot(0.1)
+    # Move forward slightly after turning to avoid the obstacle
+    motor_serial.send_command(DRIVING_SPEED, DRIVING_SPEED)
+    time.sleep(FORWARD_AFTER_TURN_DURATION)
+    stop_robot(0.1)
+
+
+# Setup and connection
 try:
     motor_serial.connect("/dev/ttyACM0")
 except:
     print("Could not open port. Is your robot connected?\nExiting program")
     sys.exit()
 
-# Start serial receive thread
 motor_serial.run()
-
-# Enter the main loop
 print("Entering loop. Ctrl+c to terminate")
+
+# Main loop
 while not motor_serial.shutdown_now:
-    # Get and print readings from distance sensors
-    dist_right = motor_serial.get_dist_4()
-    dist_left = motor_serial.get_dist_2()
-    dist_front1 = motor_serial.get_dist_3()
-    dist_front2 = motor_serial.get_dist_1()
 
-    print("Dist right:", dist_right, "   Dist left:", dist_left, "   Dist front1:", dist_front1, "   Dist front2:", dist_front2)
+    dist_1 = motor_serial.get_dist_4()
+    dist_2 = motor_serial.get_dist_2()
+    dist_3 = motor_serial.get_dist_3()
+    dist_4 = motor_serial.get_dist_1()
+    
+    print("Dist right:", dist_1, "   Dist left:", dist_2, "   Dist front1:", dist_3, "   Dist front2:", dist_4)
 
-    # Check frontal sensors for close obstacles
-    if dist_front1 < STOP_DISTANCE or dist_front2 < STOP_DISTANCE:
-        if dist_left < STOP_DISTANCE and dist_right < STOP_DISTANCE:
-            turn_robot(RIGHT, 1.2) # U-turn
-        elif dist_left < STOP_DISTANCE:
-            turn_robot(RIGHT, 0.6)
+   if dist_1 > 100 and dist_2 > 100 and dist_3 > 100:
+            stop_robot(60)
+        elif dist_1 > 70:
+            if dist_3 > 40 or dist_4 > 40: 
+                turn_90_degrees_feedback(RIGHT)
+            else:
+                turn_90_degrees_feedback(LEFT)
+
+        # Obstacle on the right
+        elif dist_1 < 15:
+            turn_90_degrees_feedback(LEFT)
+
+        # Obstacle in front
+        elif dist_3 < 15 or dist_4 < 15:
+            turn_90_degrees_feedback(LEFT)
+
+        # Obstacle on the right, left, and in front
+        elif dist_1 < 15 and dist_2 < 15 and (dist_3 < 15 or dist_4 < 15):
+            turn_90_degrees_feedback(RIGHT)
+            turn_90_degrees_feedback(RIGHT)
+
+        # No obstacle, continue forward
         else:
-            turn_robot(LEFT, 0.6)
-
-    # Wall-following behavior
-    elif dist_front1 > 60 and dist_front2 > 60: 
-        if dist_left > 70 and dist_right < 70: 
-            drive_robot(dist_front1 * 0.9, dist_front2, 0.0005)
-        elif dist_right > 70 and dist_left < 70:
-            drive_robot(dist_front1, dist_front2 * 0.9, 0.0005)
-        else:
-            drive_robot(dist_front1, dist_front2, 0.0005)
-    else:
-        # Default behavior: just drive forward.
-        drive_robot(dist_front1, dist_front2, 0.0005)
+            motor_serial.send_command(DRIVING_SPEED, DRIVING_SPEED)
+            time.sleep(0.05)  # Adjust as needed for continuous forward motion
 
 print("Goodbye")
