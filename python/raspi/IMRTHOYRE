@@ -37,6 +37,13 @@ def drive_robot(direction, duration):
     time.sleep(duration)
 
 
+def drive_robot2(dist_1, dist_2, duration):
+        gain = 10
+        speed_motor_1 = dist_1 * gain
+        speed_motor_2 = dist_2 * gain
+        motor_serial.send_command(speed_motor_1, speed_motor_2)
+        time.sleep(duration)
+
 
 def drive_turn(direction,duration):
     speed = DRIVING_SPEED * direction
