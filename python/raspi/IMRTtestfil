@@ -60,6 +60,13 @@ def turn_90_degrees_feedback(direction):
     time.sleep(FORWARD_AFTER_TURN_DURATION)
     stop_robot(0.1)
 
+def drive_robot(duration)
+     gain = 10
+        speed_motor_1 = dist_1 * gain
+        speed_motor_2 = dist_2 * gain
+        motor_serial.send_command(speed_motor_1, speed_motor_2)
+        time.sleep(duration)
+        
 
 # Setup and connection
 try:
@@ -104,7 +111,7 @@ while not motor_serial.shutdown_now:
 
         # No obstacle, continue forward
         else:
-            motor_serial.send_command(DRIVING_SPEED, DRIVING_SPEED)
-            time.sleep(0.05)  # Adjust as needed for continuous forward motion
+            drive_robot(0.005)
+            
 
 print("Goodbye")
