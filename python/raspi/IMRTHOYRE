@@ -12,8 +12,8 @@ LEFT = -1
 RIGHT = 1
 FORWARDS = 1
 BACKWARDS = -1
-DRIVING_SPEED = 100
-TURNING_SPEED = 100
+DRIVING_SPEED = 200
+TURNING_SPEED = 200
 STOP_DISTANCE = 25
 
 def stop_robot(duration):
@@ -28,17 +28,17 @@ def stop_robot(duration):
 
 def drive_robot(direction, duration):
 
-    error = dist_front - TARGET_DISTANCE
+    error = dist_1 - 10
     angle_error = dist_1 - dist_2
     speed_adjustment = 8 * error + 2 * angle_error
-    speed_motor_1 = 150 + speed_adjustment
-    speed_motor_2 = 150 - speed_adjustment
+    speed_motor_1 = 250 + speed_adjustment
+    speed_motor_2 = 250 - speed_adjustment
     motor_serial.send_command(speed_motor_1, speed_motor_2)
     time.sleep(duration)
 
 
 
-def turn_robot_random_angle(direction, duration):
+def turn_robot(direction, duration):
     for i in range(iterations):
         motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
         time.sleep(duration)
@@ -98,17 +98,18 @@ while not motor_serial.shutdown_now :
     print("Dist 1:", dist_1, "   Dist 2:", dist_2)
 
     elif dist_1>50 or dist_2>50:
-        drive_robot()
-        turn_robot()
+        drive_TURN(FORWARDS, 0.3)
+        turn_robot(RIGHT, 0.7)
+        drive_TURN(FORWARDS, 0.4)
 
 
 
     elif dist_1<10 or dist_2<10:
-      drive_robot()
+      
 
     else:
         # If there is nothing in front of the robot it continus driving forwards
-        drive_robot(FORWARDS, 0.1)
+        drive_robot(FORWARDS, 0.005)
 
 
         
