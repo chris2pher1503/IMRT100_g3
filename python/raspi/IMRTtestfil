@@ -30,7 +30,7 @@ def turn_robot(direction, duration):
     time.sleep(duration)
 
 
-def turn_90_degrees_feedback(direction):
+def turn_90_degrees_feedbackv(direction):
     initial_distance = motor_serial.get_dist_1()
     current_distance = initial_distance
     
@@ -44,21 +44,53 @@ def turn_90_degrees_feedback(direction):
     time.sleep(FORWARD_AFTER_TURN_DURATION)
     stop_robot(0.1)
 
-def turn_90_degrees_feedback(direction):
-    motor_serial.send_command(DRIVING_SPEED, DRIVING_SPEED)
-    time.sleep(FORWARD_AFTER_TURN_DURATION)
-    initial_distance = motor_serial.get_dist_1()
-    current_distance = initial_distance
+def turn_90_degrees_feedbackh(direction):
+    def turn_90_degrees_feedback(direction):
+    pre_turn_forward_duration = 0.2
+    forward_after_turn_duration = 0.2
+
+    # Move forward a bit before the turn
+    start_time = time.time()
+    while time.time() - start_time < pre_turn_forward_duration:
+        # Check if too close to front wall during pre-turn movement
+        if motor_serial.get_dist_3() < STOP_DISTANCE:
+            motor_serial.send_command(0, 0)  # Stop the robot
+            return  # Exit the function if about to collide
+        motor_serial.send_command(DRIVING_SPEED, DRIVING_SPEED)
+        time.sleep(0.01)
+
+    # Actual turning
+    previous_distance = motor_serial.get_dist_3()
+    while True:
+        # Adjusting turn by modifying speeds for left and right motors
+        motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
+        
+        # Pause for a short duration
+        time.sleep(0.05)
+        
+        # Checking if the robot is about to hit the front wall during the turn
+        current_distance = motor_serial.get_dist_3()
+        if current_distance < STOP_DISTANCE:
+            motor_serial.send_command(0, 0)  # Stop the robot
+            return  # Exit the function if about to collide
+
+        # Checking for stabilization in orientation by comparing past and current distances
+        if abs(current_distance - previous_distance) < 0.5:
+            break
+        previous_distance = current_distance
+
+    # Move forward a bit after the turn
+    start_time = time.time()
+    while time.time() - start_time < forward_after_turn_duration:
+        # Check if too close to front wall during post-turn movement
+        if motor_serial.get_dist_3() < STOP_DISTANCE:
+            motor_serial.send_command(0, 0)  # Stop the robot
+            return  # Exit the function if about to collide
+        motor_serial.send_command(DRIVING_SPEED, DRIVING_SPEED)
+        time.sleep(0.01)
     
-    while abs(current_distance - initial_distance) < DISTANCE_THRESHOLD:
-        turn_robot(direction, 0.1)  # turn in small increments
-        current_distance = motor_serial.get_dist_1()
-    
-    stop_robot(0.1)
-    # Move forward slightly after turning to avoid the obstacle
-    motor_serial.send_command(DRIVING_SPEED, DRIVING_SPEED)
-    time.sleep(FORWARD_AFTER_TURN_DURATION)
-    stop_robot(0.1)
+    motor_serial.send_command(0, 0)  # Stop the robot
+
 
 def drive_robot(duration)
      gain = 10
