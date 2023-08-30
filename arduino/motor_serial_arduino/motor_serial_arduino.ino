@@ -183,7 +183,7 @@ void loop()
     int sonic_2 = sonics_[1].ping_cm();
     int sonic_3 = sonics_[2].ping_cm();
     int sonic_4 = sonics_[3].ping_cm();
-    int sonic_5 = sonics_[3].ping_cm();
+    int sonic_5 = sonics_[4].ping_cm();
     
     if (sonic_1 == 0)
       sonic_1 = MAX_DISTANCE;
