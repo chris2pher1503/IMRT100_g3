@@ -32,7 +32,7 @@ def turn_robot(direction):
         motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
         time.sleep(0.10)
 
-execution_frequency = 10
+execution_frequency = 50
 execution_period = 1. / execution_frequency
 
 motor_serial = imrt_robot_serial.IMRTRobotSerial()
@@ -53,7 +53,7 @@ while not motor_serial.shutdown_now:
     dist_4 = motor_serial.get_dist_1()  # Front Center Sensor
     dist_5 = motor_serial.get_dist_5()  # Front Left Sensor
 
-    if dist_3 < STOP_DISTANCE or dist_4 < STOP_DISTANCE or dist_5 < STOP_DISTANCE:
+    if dist_3 < 5 or dist_4 < 5 or dist_5 < 10:
         print("Obstacle in front!")
         stop_robot(1)
         
