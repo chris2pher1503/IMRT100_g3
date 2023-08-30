@@ -22,6 +22,7 @@ BACKWARDS = -1
 DRIVING_SPEED = 50
 TURNING_SPEED = 150
 STOP_DISTANCE = 10
+sving=1.25
 
 def stop_robot(duration):
     motor_serial.send_command(0, 0)
@@ -104,35 +105,34 @@ while not motor_serial.shutdown_now :
     dist_2 = motor_serial.get_dist_2()
     dist_3 = motor_serial.get_dist_3()
     dist_4 = motor_serial.get_dist_1()
-    dist_5 = motor_serial.get_dist_5()
-    print("Dist hoyre:", dist_1, "   Dist venstre:", dist_2, "   Dist foran1:", dist_3, "   Dist foran2:", dist_4 ," Dist foran2:", dist_4)
+    print("Dist hoyre:", dist_1, "   Dist venstre:", dist_2, "   Dist foran1:", dist_3, "   Dist foran2:", dist_4 ,)
 
     # Check if there is an obstacle in the way
-    if dist_1>100 and dist_2>100 and dist_5>100: 
+    if dist_1>100 and dist_2>100 and dist_3>100: 
         stop_robot(10)
         #play song
         
     
     elif dist_1>70: 
         drive_turn(FORWARDS,0.1)
-        turn_robot(RIGHT,1.25)
+        turn_robot(RIGHT,sving)
         drive_turn(FORWARDS,0.4)
     
     elif dist_1<15 and dist_3<15:
-        turn_robot(LEFT,1.25)
+        turn_robot(LEFT,sving)
         
-    elif dist_1<15 and dist_5<15 and dist_2<15: 
-        turn_robot(RIGHT,1.25)
-        turn_robot(RIGHT,1.25)
-    elif dist_3<10 or dist_4<10 or dist_5<10:
-        turn_robot(RIGHT,1.25)
+    elif dist_1<15 and dist_3<15 and dist_2<15: 
+        turn_robot(RIGHT,sving)
+        turn_robot(RIGHT,sving)
+    elif dist_3<10 or dist_4<10 or:
+        turn_robot(RIGHT,sving)
         
     
         
 
     else:
         # If there is nothing in front of the robot it continus driving forwards
-        drive_robot(dist_1,dist_2, 0.001)
+        drive_robot(dist_1,dist_2, 0.0005)
         
         
         
