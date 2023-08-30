@@ -8,7 +8,7 @@ FORWARDS = 1
 BACKWARDS = -1
 DRIVING_SPEED = 100
 TURNING_SPEED = 100
-STOP_DISTANCE = 10
+STOP_DISTANCE = 7
 
 def stop_robot(duration):
     iterations = int(duration * 10)
