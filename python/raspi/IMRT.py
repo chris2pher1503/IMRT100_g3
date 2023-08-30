@@ -124,7 +124,7 @@ while not motor_serial.shutdown_now :
     elif dist_1<15 and dist_3<15 and dist_2<15: 
         turn_robot(RIGHT,sving)
         turn_robot(RIGHT,sving)
-    elif dist_3<10 or dist_4<10 or:
+    elif dist_3<10 or dist_4<10:
         turn_robot(RIGHT,sving)
         
     
