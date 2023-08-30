@@ -30,7 +30,7 @@ class IMRTRobotSerial :
         self._dist_2 = 10
         self._dist_3 = 70
         self._dist_4 = 70
-        self._dist_5 = 70
+        self._dist_5 = 10
         
         # Create an event for signaling threads when its time terminate the program
         self._run_event = threading.Event()
@@ -150,6 +150,14 @@ class IMRTRobotSerial :
         
         self._mutex.acquire()
         dist = self._dist_4
+        self._mutex.release()
+        
+        return dist
+     # Returns latest measurement from distance sensor 2
+    def get_dist_4(self):
+        
+        self._mutex.acquire()
+        dist = self._dist_5
         self._mutex.release()
         
         return dist
