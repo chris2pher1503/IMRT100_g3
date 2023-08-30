@@ -22,7 +22,8 @@
 NewPing sonics_[SONIC_NUM] = {NewPing( 3,  3, MAX_DISTANCE),
                               NewPing(11, 11, MAX_DISTANCE),
                               NewPing(A2, A2, MAX_DISTANCE),
-                              NewPing(A3, A3, MAX_DISTANCE)                          
+                              NewPing(A3, A3, MAX_DISTANCE),
+                              NewPing(10,10, MAX_DISTANCE)
                              };
 
 DualVNH5019MotorShield md;
