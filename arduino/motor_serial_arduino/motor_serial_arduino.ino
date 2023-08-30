@@ -183,6 +183,7 @@ void loop()
     int sonic_2 = sonics_[1].ping_cm();
     int sonic_3 = sonics_[2].ping_cm();
     int sonic_4 = sonics_[3].ping_cm();
+    int sonic_5 = sonics_[3].ping_cm();
     
     if (sonic_1 == 0)
       sonic_1 = MAX_DISTANCE;
@@ -192,6 +193,8 @@ void loop()
       sonic_3 = MAX_DISTANCE;
     if (sonic_4 == 0)
       sonic_4 = MAX_DISTANCE;
+    if (sonic_5 == 0)
+      sonic_5 = MAX_DISTANCE;
     
     char tx_msg[MSG_SIZE];
     tx_msg[0] = 'f';
@@ -199,6 +202,7 @@ void loop()
     tx_msg[2] = (sonic_2) & 0xff;
     tx_msg[3] = (sonic_3) & 0xff;
     tx_msg[4] = (sonic_4) & 0xff;
+    tx_msg[5] = (sonic_5) & 0xff;
     tx_msg[MSG_SIZE - 1] = '\n';
 
     short crc = crc16(tx_msg, MSG_SIZE - 3);
