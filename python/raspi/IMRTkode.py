@@ -8,7 +8,7 @@ FORWARDS = 1
 BACKWARDS = -1
 DRIVING_SPEED = 100
 TURNING_SPEED = 100
-STOP_DISTANCE = 25
+STOP_DISTANCE = 10
 
 def stop_robot(duration):
     iterations = int(duration * 10)
@@ -30,7 +30,7 @@ def turn_robot(direction):
     iterations = int(9)  # For ~90 graders sving
     for i in range(iterations):
         motor_serial.send_command(TURNING_SPEED * direction, -TURNING_SPEED * direction)
-        time.sleep(0.05)
+        time.sleep(0.10)
 
 execution_frequency = 10
 execution_period = 1. / execution_frequency
