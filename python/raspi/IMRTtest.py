@@ -179,10 +179,5 @@ while not motor_serial.shutdown_now :
 print("Goodbye")
 
 
-# In[2]:
-
-
-
-
-
-# In[ ]:
+pygame.quit()
+sys.exit()
