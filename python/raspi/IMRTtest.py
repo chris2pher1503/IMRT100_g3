@@ -50,16 +50,18 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 mp3_file_path = 'Barbiesong.mp3'
 image_path = 'MyMans.jpg'
 
-# Start playing the music in a separate thread
+robot_control_thread = threading.Thread(target=robot_control_loop)
 music_thread = threading.Thread(target=play_music, args=(mp3_file_path,))
-music_thread.start()
+
+# Start the threads
+robot_control_thread.start()
 
 # Display the image
 display_image(image_path, screen)
 
 # Wait for the music thread to finish before quitting
+robot_control_thread.join()
 music_thread.join()
-
 
 
 
