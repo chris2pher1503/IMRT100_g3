@@ -35,7 +35,7 @@ def play_music(mp3_file_path):
     pygame.mixer.init()
     pygame.mixer.music.load(mp3_file_path)
     pygame.mixer.music.play()
-    time.sleep(30)  # Adjust the duration as needed
+    time.sleep(120)  # Adjust the duration as needed
     pygame.mixer.music.stop()
 
 # Initialize pygame
